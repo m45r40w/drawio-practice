@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# コミットする .drawio ごとに:
+#   1. ルールチェック (scripts/drawio-validate.py) … ERROR があればコミットを止める
+#   2. PNG を作る      (<name>.drawio.png)
+#   3. 開くURLを作る   (<name>.drawio.url.txt)
+# 作ったファイルは自動でステージに追加する。
+# 有効にする: git config core.hooksPath .githooks
+set -euo pipefail
+
+root="$(git rev-parse --show-toplevel)"
+cd "$root"
+
+mapfile -t files < <(git diff --cached --name-only --diff-filter=ACMR -- '*.drawio')
+[ "${#files[@]}" -eq 0 ] && exit 0
+
+python3 scripts/drawio-validate.py "${files[@]}"
+
+for f in "${files[@]}"; do
+  png="$f.png"
+  if node scripts/drawio-render.js "$f" "$png" --scale 2 >/dev/null 2>&1; then
+    echo "pre-commit: rendered $png"
+    git add "$png"
+  elif command -v drawio >/dev/null 2>&1; then
+    drawio -x -f png -s 2 -o "$png" "$f" >/dev/null 2>&1
+    echo "pre-commit: rendered $png (drawio CLI)"
+    git add "$png"
+  else
+    echo "pre-commit: WARN could not render $f (run: bash scripts/setup-drawio-viewer.sh)" >&2
+  fi
+  python3 scripts/drawio-url.py "$f" -o "$f.url.txt"
+  git add "$f.url.txt"
+done
