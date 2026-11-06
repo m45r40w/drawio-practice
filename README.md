@@ -11,6 +11,7 @@ Claude Code から指示して draw.io の図を作る練習用リポジトリ�
 | `aws-serverless.drawio` | AWS構成図（利用者 → API Gateway → Lambda → DynamoDB / S3、ログは CloudWatch Logs） |
 | `aws-serverless.drawio.png` | 上の図の PNG（コミット時に自動で作成） |
 | `aws-serverless.drawio.url.txt` | 図のデータを埋め込んだ app.diagrams.net 用のURL（コミット時に自動で作成） |
+| `terraform/` | 構成図を Terraform で表したコード（[説明](terraform/README.md)） |
 | `.claude/skills/drawio/` | Claude Code 用の作図ルールと手順（skill） |
 | `scripts/` | チェック・PNG 変換・URL 作成のスクリプト |
 | `.githooks/pre-commit` | コミット時にチェックと PNG・URL の作成を行うフック |

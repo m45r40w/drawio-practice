@@ -1,0 +1,9 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+build/
+crash.log
+# このリポジトリでは手元のプロバイダ（linux_amd64 のみ）で init したため、
+# ロックファイルに他の OS のハッシュが入らない。各自の環境で init して作る。
+.terraform.lock.hcl
